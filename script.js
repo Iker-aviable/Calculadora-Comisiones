@@ -1,45 +1,34 @@
 let grafico = null;
 
-function formatearNumeroEntrada(valorOriginal) {
-  let partes = valorOriginal.toString().replace(/\./g, '').split(',');
-  let entero = partes[0];
-  let decimal = partes[1];
-
-  let numeroFormateado = parseInt(entero).toLocaleString('es-ES');
-
-  if (decimal !== undefined && decimal.length > 0) {
-    return `${numeroFormateado},${decimal}`;
-  } else {
-    return numeroFormateado;
-  }
-}
-
 function limpiarNumero(texto) {
   return parseFloat(texto.replace(/\./g, '').replace(',', '.'));
 }
 
-function formatearInput(input) {
-  input.addEventListener('blur', function () {
-    let valor = input.value;
+function formatearMiles(input) {
+  input.addEventListener('input', function () {
+    let valor = input.value.replace(/\./g, '').replace(/[^\d]/g, '');
     if (valor === "") return;
-
-    valor = valor.replace(/[^0-9,]/g, ''); // solo números y coma
-    let partes = valor.split(',');
-    let entero = partes[0] || "0";
-    let decimal = partes[1];
-
-    if (decimal !== undefined) {
-      input.value = formatearNumeroEntrada(`${entero},${decimal}`);
-    } else {
-      input.value = formatearNumeroEntrada(entero);
+    let numero = parseInt(valor, 10);
+    if (!isNaN(numero)) {
+      input.value = numero.toLocaleString('es-ES');
     }
   });
 }
 
+function permitirComa(input) {
+  input.addEventListener('input', function () {
+    let valor = input.value
+      .replace(/[^\d,]/g, '')        // solo números y coma
+      .replace(/,+/g, ',')           // solo una coma
+      .replace(/^,/, '');            // no empezar por coma
+    input.value = valor;
+  });
+}
+
 window.onload = function () {
-  formatearInput(document.getElementById('asesoramiento'));
-  formatearInput(document.getElementById('rto'));
-  formatearInput(document.getElementById('margen'));
+  formatearMiles(document.getElementById('asesoramiento'));
+  formatearMiles(document.getElementById('rto'));
+  permitirComa(document.getElementById('margen'));
 };
 
 function calcular() {
@@ -92,9 +81,7 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
   const canvas = document.getElementById('graficoComisiones');
   const ctx = canvas.getContext('2d');
 
-  if (grafico) {
-    grafico.destroy();
-  }
+  if (grafico) grafico.destroy();
 
   grafico = new Chart(ctx, {
     type: 'bar',
@@ -112,9 +99,16 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
       plugins: {
         legend: {
           labels: {
-            color: '#e76f51', // color de la comisión final (rojo)
-            font: {
-              weight: 'bold'
+            color: '#000', // texto negro
+            generateLabels: function(chart) {
+              return [{
+                text: 'Comisiones (€)',
+                fillStyle: '#e76f51', // cuadro rojo
+                strokeStyle: '#e76f51',
+                lineWidth: 1,
+                hidden: false,
+                index: 2
+              }];
             }
           }
         }
@@ -127,4 +121,3 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
     }
   });
 }
-
