@@ -1,10 +1,17 @@
 let grafico = null;
 
-function formatearNumero(num) {
-  return num.toLocaleString('es-ES', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+function formatearNumeroEntrada(valorOriginal) {
+  let partes = valorOriginal.toString().replace(/\./g, '').split(',');
+  let entero = partes[0];
+  let decimal = partes[1];
+
+  let numeroFormateado = parseInt(entero).toLocaleString('es-ES');
+
+  if (decimal !== undefined && decimal.length > 0) {
+    return `${numeroFormateado},${decimal}`;
+  } else {
+    return numeroFormateado;
+  }
 }
 
 function limpiarNumero(texto) {
@@ -12,18 +19,23 @@ function limpiarNumero(texto) {
 }
 
 function formatearInput(input) {
-  input.addEventListener('input', function () {
-    let valor = input.value.replace(/\./g, '').replace(',', '.');
-    if (!isNaN(valor) && valor.trim() !== '') {
-      let num = parseFloat(valor);
-      input.value = num.toLocaleString('es-ES', {
-        maximumFractionDigits: 0
-      });
+  input.addEventListener('blur', function () {
+    let valor = input.value;
+    if (valor === "") return;
+
+    valor = valor.replace(/[^0-9,]/g, ''); // solo números y coma
+    let partes = valor.split(',');
+    let entero = partes[0] || "0";
+    let decimal = partes[1];
+
+    if (decimal !== undefined) {
+      input.value = formatearNumeroEntrada(`${entero},${decimal}`);
+    } else {
+      input.value = formatearNumeroEntrada(entero);
     }
   });
 }
 
-// Formatear campos en vivo
 window.onload = function () {
   formatearInput(document.getElementById('asesoramiento'));
   formatearInput(document.getElementById('rto'));
@@ -65,10 +77,10 @@ function calcular() {
   const comisionFinal = Math.min(comisionBruta, comisionMaxima);
 
   resultado.innerHTML = `
-    <strong>Comisión por Criterios Cuantitativos:</strong> ${formatearNumero(cuantitativo)} €<br>
-    <strong>Comisión por Criterios Cualitativos:</strong> ${formatearNumero(cualitativo)} €<br>
-    <strong>Comisión Total antes de ajuste:</strong> ${formatearNumero(comisionBruta)} €<br>
-    <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${formatearNumero(comisionFinal)} €
+    <strong>Comisión por Criterios Cuantitativos:</strong> ${cuantitativo.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
+    <strong>Comisión por Criterios Cualitativos:</strong> ${cualitativo.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
+    <strong>Comisión Total antes de ajuste:</strong> ${comisionBruta.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
+    <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${comisionFinal.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €
     <br><br>
     <canvas id="graficoComisiones" width="400" height="250" style="max-width: 100%;"></canvas>
   `;
@@ -97,6 +109,16 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: '#e76f51', // color de la comisión final (rojo)
+            font: {
+              weight: 'bold'
+            }
+          }
+        }
+      },
       scales: {
         y: {
           beginAtZero: true
@@ -105,3 +127,4 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
     }
   });
 }
+
