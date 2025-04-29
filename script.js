@@ -1,3 +1,5 @@
+let grafico = null; // Variable global para el gráfico
+
 function formatearNumero(num) {
   return num.toLocaleString('es-ES', {
     minimumFractionDigits: 2,
@@ -21,7 +23,7 @@ function formatearInput(input) {
   });
 }
 
-// Formateo en vivo para campos numéricos
+// Formatear entradas en vivo
 window.onload = function () {
   formatearInput(document.getElementById('asesoramiento'));
   formatearInput(document.getElementById('rto'));
@@ -68,4 +70,34 @@ function calcular() {
     <strong>Comisión Total antes de ajuste:</strong> ${formatearNumero(comisionBruta)} €<br>
     <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${formatearNumero(comisionFinal)} €
   `;
+
+  dibujarGrafico(cuantitativo, cualitativo, comisionFinal);
+}
+
+function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
+  const ctx = document.getElementById('graficoComisiones').getContext('2d');
+
+  if (grafico) {
+    grafico.destroy();
+  }
+
+  grafico = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Cuantitativo', 'Cualitativo', 'Final'],
+      datasets: [{
+        label: 'Comisiones (€)',
+        data: [cuantitativo, cualitativo, comisionFinal],
+        backgroundColor: ['#2a9d8f', '#f4a261', '#e76f51']
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 }
