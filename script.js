@@ -1,4 +1,4 @@
-let grafico = null; // Variable global para el gráfico
+let grafico = null;
 
 function formatearNumero(num) {
   return num.toLocaleString('es-ES', {
@@ -23,7 +23,7 @@ function formatearInput(input) {
   });
 }
 
-// Formatear entradas en vivo
+// Formatear campos en vivo
 window.onload = function () {
   formatearInput(document.getElementById('asesoramiento'));
   formatearInput(document.getElementById('rto'));
@@ -69,13 +69,16 @@ function calcular() {
     <strong>Comisión por Criterios Cualitativos:</strong> ${formatearNumero(cualitativo)} €<br>
     <strong>Comisión Total antes de ajuste:</strong> ${formatearNumero(comisionBruta)} €<br>
     <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${formatearNumero(comisionFinal)} €
+    <br><br>
+    <canvas id="graficoComisiones" width="400" height="250" style="max-width: 100%;"></canvas>
   `;
 
   dibujarGrafico(cuantitativo, cualitativo, comisionFinal);
 }
 
 function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
-  const ctx = document.getElementById('graficoComisiones').getContext('2d');
+  const canvas = document.getElementById('graficoComisiones');
+  const ctx = canvas.getContext('2d');
 
   if (grafico) {
     grafico.destroy();
@@ -93,6 +96,7 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true
