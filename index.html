@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Comisiones</title>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <h2>Calculadora de Comisiones de Agentes</h2>
+  <label>Saldo Asesoramiento (€): <input id="asesoramiento" /></label><br>
+  <label>Saldo RTO (€): <input id="rto" /></label><br>
+  <label>Margen MAPFRE (%): <input id="margen" /></label><br><br>
+
+  <label>Criterio Operativo:
+    <select id="operativo">
+      <option>No</option><option>Sí</option>
+    </select>
+  </label><br>
+  <label>Criterio Saldos:
+    <select id="saldos">
+      <option>No</option><option>Sí</option>
+    </select>
+  </label><br>
+  <label>Criterio Permanencia:
+    <select id="permanencia">
+      <option>No</option><option>Sí</option>
+    </select>
+  </label><br><br>
+
+  <button onclick="calcular()">Calcular</button>
+  <pre id="resultado"></pre>
+</body>
+</html>
