@@ -1,5 +1,3 @@
-let grafico = null;
-
 function limpiarNumero(texto) {
   return parseFloat(texto.replace(/\./g, '').replace(',', '.'));
 }
@@ -70,57 +68,5 @@ function calcular() {
     <strong>Comisión por Criterios Cualitativos:</strong> ${cualitativo.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
     <strong>Comisión Total antes de ajuste:</strong> ${comisionBruta.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
     <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${comisionFinal.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €
-    <br><br>
-    <div style="height:250px;">
-      <canvas id="graficoComisiones"></canvas>
-    </div>
   `;
-
-  dibujarGrafico(cuantitativo, cualitativo, comisionFinal);
-}
-
-function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
-  const canvas = document.getElementById('graficoComisiones').getContext('2d');
-
-  if (grafico) grafico.destroy();
-
-  grafico = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: ['Cuantitativo', 'Cualitativo', 'Final'],
-      datasets: [{
-        label: 'Comisiones (€)',
-        data: [cuantitativo, cualitativo, comisionFinal],
-        backgroundColor: ['#2a9d8f', '#f4a261', '#e76f51']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 2, // control de proporción
-      plugins: {
-        legend: {
-          labels: {
-            color: '#000', // texto negro
-            generateLabels: function (chart) {
-              const dataset = chart.data.datasets[0];
-              return [{
-                text: dataset.label,
-                fillStyle: '#e76f51', // cuadro rojo
-                strokeStyle: '#e76f51',
-                lineWidth: 1,
-                hidden: false,
-                index: 2
-              }];
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
 }
