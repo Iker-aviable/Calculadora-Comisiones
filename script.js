@@ -80,11 +80,11 @@ function calcular() {
 }
 
 function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
-  const ctx = document.getElementById('graficoComisiones').getContext('2d');
+  const canvas = document.getElementById('graficoComisiones').getContext('2d');
 
   if (grafico) grafico.destroy();
 
-  grafico = new Chart(ctx, {
+  grafico = new Chart(canvas, {
     type: 'bar',
     data: {
       labels: ['Cuantitativo', 'Cualitativo', 'Final'],
@@ -96,16 +96,17 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
+      aspectRatio: 2, // control de proporción
       plugins: {
         legend: {
           labels: {
-            color: '#000', // Texto negro
+            color: '#000', // texto negro
             generateLabels: function (chart) {
               const dataset = chart.data.datasets[0];
               return [{
                 text: dataset.label,
-                fillStyle: '#e76f51', // Cuadro rojo
+                fillStyle: '#e76f51', // cuadro rojo
                 strokeStyle: '#e76f51',
                 lineWidth: 1,
                 hidden: false,
