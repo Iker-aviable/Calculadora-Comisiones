@@ -4,7 +4,7 @@ function limpiarNumero(texto) {
   return parseFloat(texto.replace(/\./g, '').replace(',', '.'));
 }
 
-function formatearMiles(input) {
+function formatearMilesEnTiempoReal(input) {
   input.addEventListener('input', function () {
     let valor = input.value.replace(/\./g, '').replace(/[^\d]/g, '');
     if (valor === "") return;
@@ -15,20 +15,20 @@ function formatearMiles(input) {
   });
 }
 
-function permitirComa(input) {
+function permitirComaEnMargen(input) {
   input.addEventListener('input', function () {
     let valor = input.value
-      .replace(/[^\d,]/g, '')        // solo números y coma
-      .replace(/,+/g, ',')           // solo una coma
-      .replace(/^,/, '');            // no empezar por coma
+      .replace(/[^\d,]/g, '')    // solo números y comas
+      .replace(/,+/g, ',')        // solo una coma
+      .replace(/^,/, '');         // no empezar con coma
     input.value = valor;
   });
 }
 
 window.onload = function () {
-  formatearMiles(document.getElementById('asesoramiento'));
-  formatearMiles(document.getElementById('rto'));
-  permitirComa(document.getElementById('margen'));
+  formatearMilesEnTiempoReal(document.getElementById('asesoramiento'));
+  formatearMilesEnTiempoReal(document.getElementById('rto'));
+  permitirComaEnMargen(document.getElementById('margen'));
 };
 
 function calcular() {
@@ -71,15 +71,16 @@ function calcular() {
     <strong>Comisión Total antes de ajuste:</strong> ${comisionBruta.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €<br>
     <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${comisionFinal.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €
     <br><br>
-    <canvas id="graficoComisiones" width="400" height="250" style="max-width: 100%;"></canvas>
+    <div style="height:250px;">
+      <canvas id="graficoComisiones"></canvas>
+    </div>
   `;
 
   dibujarGrafico(cuantitativo, cualitativo, comisionFinal);
 }
 
 function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
-  const canvas = document.getElementById('graficoComisiones');
-  const ctx = canvas.getContext('2d');
+  const ctx = document.getElementById('graficoComisiones').getContext('2d');
 
   if (grafico) grafico.destroy();
 
@@ -99,11 +100,12 @@ function dibujarGrafico(cuantitativo, cualitativo, comisionFinal) {
       plugins: {
         legend: {
           labels: {
-            color: '#000', // texto negro
-            generateLabels: function(chart) {
+            color: '#000', // Texto negro
+            generateLabels: function (chart) {
+              const dataset = chart.data.datasets[0];
               return [{
-                text: 'Comisiones (€)',
-                fillStyle: '#e76f51', // cuadro rojo
+                text: dataset.label,
+                fillStyle: '#e76f51', // Cuadro rojo
                 strokeStyle: '#e76f51',
                 lineWidth: 1,
                 hidden: false,
