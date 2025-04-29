@@ -1,21 +1,47 @@
 function formatearNumero(num) {
-  return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return num.toLocaleString('es-ES', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 }
 
+function limpiarNumero(texto) {
+  return parseFloat(texto.replace(/\./g, '').replace(',', '.'));
+}
+
+function formatearInput(input) {
+  input.addEventListener('input', function () {
+    let valor = input.value.replace(/\./g, '').replace(',', '.');
+    if (!isNaN(valor) && valor.trim() !== '') {
+      let num = parseFloat(valor);
+      input.value = num.toLocaleString('es-ES', {
+        maximumFractionDigits: 0
+      });
+    }
+  });
+}
+
+// Formateo en vivo para campos numéricos
+window.onload = function () {
+  formatearInput(document.getElementById('asesoramiento'));
+  formatearInput(document.getElementById('rto'));
+  formatearInput(document.getElementById('margen'));
+};
+
 function calcular() {
-  const asesoramiento = parseFloat(document.getElementById('asesoramiento').value.replace(/\./g, '').replace(',', '.'));
-  const rto = parseFloat(document.getElementById('rto').value.replace(/\./g, '').replace(',', '.'));
-  const margen = parseFloat(document.getElementById('margen').value.replace(/\./g, '').replace(',', '.'));
- 
+  const asesoramiento = limpiarNumero(document.getElementById('asesoramiento').value);
+  const rto = limpiarNumero(document.getElementById('rto').value);
+  const margen = limpiarNumero(document.getElementById('margen').value);
+
   const operativo = document.getElementById('operativo').value;
   const saldos = document.getElementById('saldos').value;
   const permanencia = document.getElementById('permanencia').value;
 
   const resultado = document.getElementById('resultado');
-  resultado.textContent = "";
+  resultado.innerHTML = "";
 
   if (isNaN(asesoramiento) || isNaN(rto) || isNaN(margen)) {
-    resultado.textContent = "❌ Error: Introduce valores numéricos válidos.";
+    resultado.innerHTML = "<span style='color:red;'>❌ Error: Introduce valores numéricos válidos.</span>";
     return;
   }
 
@@ -26,7 +52,7 @@ function calcular() {
   if (saldos === 'Sí') criteriosCumplidos++;
   if (permanencia === 'Sí') criteriosCumplidos++;
 
-  const porcentajeAdicional = {0: 0.00, 1: 0.001, 2: 0.004, 3: 0.006}[criteriosCumplidos];
+  const porcentajeAdicional = { 0: 0.00, 1: 0.001, 2: 0.004, 3: 0.006 }[criteriosCumplidos];
 
   const cuantitativo = (asesoramiento * 0.0030) + (rto * 0.0020) + (asesoramiento * porcentajeAdicional);
   const cualitativoMax = (cuantitativo * 30) / 70;
@@ -36,9 +62,10 @@ function calcular() {
   const comisionMaxima = saldoCartera * (margen / 100) * 0.75;
   const comisionFinal = Math.min(comisionBruta, comisionMaxima);
 
-  resultado.textContent =
-    "\\nComisión por Criterios Cuantitativos: " + formatearNumero(cuantitativo) + " €" +
-    "\\nComisión por Criterios Cualitativos: " + formatearNumero(cualitativo) + " €" +
-    "\\nComisión Total antes de ajuste: " + formatearNumero(comisionBruta) + " €" +
-    "\\nComisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora): " + formatearNumero(comisionFinal) + " €";
+  resultado.innerHTML = `
+    <strong>Comisión por Criterios Cuantitativos:</strong> ${formatearNumero(cuantitativo)} €<br>
+    <strong>Comisión por Criterios Cualitativos:</strong> ${formatearNumero(cualitativo)} €<br>
+    <strong>Comisión Total antes de ajuste:</strong> ${formatearNumero(comisionBruta)} €<br>
+    <strong>Comisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora):</strong> ${formatearNumero(comisionFinal)} €
+  `;
 }
