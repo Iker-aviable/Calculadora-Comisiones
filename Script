@@ -3,7 +3,6 @@ function formatearNumero(num) {
 }
 
 function calcular() {
-  // Leer valores del formulario
   const asesoramiento = parseFloat(document.getElementById('asesoramiento').value.replace(/\./g, '').replace(',', '.'));
   const rto = parseFloat(document.getElementById('rto').value.replace(/\./g, '').replace(',', '.'));
   const margen = parseFloat(document.getElementById('margen').value.replace(/\./g, '').replace(',', '.'));
@@ -13,15 +12,13 @@ function calcular() {
   const permanencia = document.getElementById('permanencia').value;
 
   const resultado = document.getElementById('resultado');
-  resultado.textContent = ""; // Limpiar antes
+  resultado.textContent = "";
 
-  // Validaciones
   if (isNaN(asesoramiento) || isNaN(rto) || isNaN(margen)) {
     resultado.textContent = "❌ Error: Introduce valores numéricos válidos.";
     return;
   }
 
-  // Cálculo
   const saldoCartera = asesoramiento + rto;
 
   let criteriosCumplidos = 0;
@@ -39,10 +36,9 @@ function calcular() {
   const comisionMaxima = saldoCartera * (margen / 100) * 0.75;
   const comisionFinal = Math.min(comisionBruta, comisionMaxima);
 
-  // Mostrar resultado
   resultado.textContent =
     "\\nComisión por Criterios Cuantitativos: " + formatearNumero(cuantitativo) + " €" +
     "\\nComisión por Criterios Cualitativos: " + formatearNumero(cualitativo) + " €" +
     "\\nComisión Total antes de ajuste: " + formatearNumero(comisionBruta) + " €" +
-    "\\nComisión Total FINAL (ajustada a máximo 75% margen): " + formatearNumero(comisionFinal) + " €";
+    "\\nComisión Total FINAL (ajustada a máximo 75% del margen de la Aseguradora): " + formatearNumero(comisionFinal) + " €";
 }
