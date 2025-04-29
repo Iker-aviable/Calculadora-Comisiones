@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Calculadora de Comisiones</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f7f9fc;
+      background: #f2f7f9;
       color: #333;
       padding: 30px;
     }
@@ -62,11 +63,18 @@
       color: white;
     }
 
-    pre {
+    #resultado {
       background: #eef2f5;
       padding: 15px;
       border-radius: 8px;
       font-size: 0.95em;
+      margin-top: 20px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    #grafico {
+      margin-top: 30px;
     }
   </style>
   <script defer src="script.js"></script>
@@ -107,7 +115,10 @@
     <button class="btn-calcular" onclick="calcular()">Calcular</button>
     <button class="btn-reiniciar" onclick="location.reload()">Reiniciar</button>
 
-    <pre id="resultado"></pre>
+    <div id="resultado"></div>
+    <div id="grafico">
+      <canvas id="graficoComisiones"></canvas>
+    </div>
   </div>
 </body>
 </html>
